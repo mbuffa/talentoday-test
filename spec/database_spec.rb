@@ -23,6 +23,7 @@ describe 'Database' do
       before do
         teleporter_id = 1
         time = Time.now.utc
+        # TODO: DRY this!
         @database.reservations.insert Reservation.new(teleporter_id, time)
         @database.reservations.insert Reservation.new(teleporter_id, time)
       end
