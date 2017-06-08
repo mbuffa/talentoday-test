@@ -36,12 +36,12 @@ describe 'Database' do
         teleporter_id = 5
         location_name = 'Lyon'
         teleporter = Teleporter.new(teleporter_id, location_name)
-        @database.teleporters.insert Teleporter.new(teleporter_id, location_name)
+        @database.teleporters.insert teleporter
         expect(@database.teleporters).to include(teleporter)
       end
 
       it 'returns expected data' do
-        expect(@database.reservations.where(:teleporter_id, 1).first).to be_a(Reservation)
+        expect(@database.reservations.where(:teleporter_id, 1).first.teleporter_id).to eq 1
       end
 
       it 'filters data' do
@@ -52,17 +52,18 @@ describe 'Database' do
         expect(@database.reservations.size).to eq 1
       end
 
-      it 'verifies data type' do
+      it 'prevents inserting wrong objects in collections' do
         teleporter_id = 4
         location_name = 'Madrid'
         @database.reservations.clear
-        @database.reservations.insert Teleporter.new(teleporter_id, location_name)
-        expect(@database.reservations.size).to eq 0
+        expect { @database.reservations.insert Teleporter.new(teleporter_id, location_name) }.to raise_error
       end
 
       it 'clears data' do
-        @database.reservations.clear
-        expect(@database.reservations.size).to eq 0
+        teleporter_id = 4
+        location_name = 'Madrid'
+        @database.teleporters.insert Teleporter.new(teleporter_id, location_name)
+        expect { @database.teleporters.clear }.to change { @database.teleporters.size }.to 0
       end
     end
   end
